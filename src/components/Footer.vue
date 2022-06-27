@@ -30,7 +30,7 @@
             <router-link class="link" :to="{ name: 'CreatePost' }"
               >Create Post</router-link
             >
-            <router-link class="link" :to="{ name: 'Login' }"
+            <router-link v-if="!user" class="link" :to="{ name: 'Login' }"
               >Login In / Register</router-link
             >
           </ul>
@@ -56,14 +56,11 @@
       instagram,
       linkedin,
     },
-    // computed: {
-    //   user() {
-    //     return this.$store.state.user;
-    //   },
-    //   admin() {
-    //     return this.$store.state.profileAdmin;
-    //   },
-    // },
+    computed: {
+      user() {
+        return this.$store.state.user;
+      },
+    },
   };
 </script>
 

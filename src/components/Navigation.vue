@@ -11,10 +11,54 @@
           <router-link class="link" :to="{ name: 'Home' }">Home</router-link>
           <router-link class="link" :to="{ name: 'Blogs' }">Blogs</router-link>
           <router-link class="link" to="#">Create Post</router-link>
-          <router-link class="link" :to="{ name: 'Login' }"
+          <router-link class="link" :to="{ name: 'Login' }" v-if="!user"
             >Login/Register</router-link
           >
         </ul>
+        <div
+          class="profile"
+          ref="profile"
+          @click="toggleProfileMenu"
+          v-if="user"
+        >
+          <span> {{ this.$store.state.profileInitials.toUpperCase() }} </span>
+          <div class="profile-menu" v-show="profileMenu">
+            <div class="info">
+              <p class="initials">
+                {{ this.$store.state.profileInitials.toUpperCase() }}
+              </p>
+              <div class="right">
+                <p>
+                  {{
+                    this.$store.state.profileFirstName +
+                      " " +
+                      this.$store.state.profileLastName
+                  }}
+                </p>
+                <p>{{ this.$store.state.profileUsername }}</p>
+                <p>{{ this.$store.state.profileEmail }}</p>
+              </div>
+            </div>
+            <div class="options">
+              <div class="option">
+                <router-link class="option" to="#">
+                  <userIcon class="icon" />
+                  <p>Profile</p>
+                </router-link>
+              </div>
+              <div class="option">
+                <router-link class="option" to="#">
+                  <adminIcon class="icon" />
+                  <p>Admin</p>
+                </router-link>
+              </div>
+              <div class="option" @click="signOut">
+                <signOutIcon class="icon" />
+                <p>Sign Out</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
     <menuIcon class="menu-icon" @click="toggleMobileNav" v-show="mobile" />
@@ -24,7 +68,7 @@
         <router-link class="link" :to="{ name: 'Home' }">Home</router-link>
         <router-link class="link" :to="{ name: 'Blogs' }">Blogs</router-link>
         <router-link class="link" to="#">Create Post</router-link>
-        <router-link class="link" :to="{ name: 'Login' }"
+        <router-link class="link" :to="{ name: 'Login' }" v-if="!user"
           >Login/Register</router-link
         >
       </ul>
@@ -34,13 +78,22 @@
 
 <script>
   import menuIcon from "../assets/Icons/bars-regular.svg";
+  import userIcon from "../assets/Icons/user-alt-light.svg";
+  import adminIcon from "../assets/Icons/user-crown-light.svg";
+  import signOutIcon from "../assets/Icons/sign-out-alt-regular.svg";
+  import firebase from "firebase/app";
+  import "firebase/auth";
   export default {
     name: "navigation",
     components: {
       menuIcon,
+      userIcon,
+      adminIcon,
+      signOutIcon,
     },
     data() {
       return {
+        profileMenu: false,
         mobile: null,
         mobileNav: null,
         windowWidth: null,
@@ -63,6 +116,21 @@
       },
       toggleMobileNav() {
         this.mobileNav = !this.mobileNav;
+      },
+      toggleProfileMenu(e) {
+        if (e.target === this.$refs.profile) {
+          this.profileMenu = !this.profileMenu;
+        }
+      },
+
+      signOut() {
+        firebase.auth().signOut();
+        window.location.reload();
+      },
+    },
+    computed: {
+      user() {
+        return this.$store.state.user;
       },
     },
   };
